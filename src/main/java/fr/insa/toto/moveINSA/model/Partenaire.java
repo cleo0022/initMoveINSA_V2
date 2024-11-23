@@ -123,7 +123,7 @@ public class Partenaire implements Serializable{
         }
     }
 
-    public static List<Partenaire> tousLesPartaires(Connection con) throws SQLException {
+    public static List<Partenaire> tousLesPartenaires(Connection con) throws SQLException {
         try (PreparedStatement pst = con.prepareStatement(
                 "select id,refPartenaire from partenaire")) {
             ResultSet rs = pst.executeQuery();
@@ -159,7 +159,7 @@ public class Partenaire implements Serializable{
 
     public static Partenaire selectInConsole(Connection con) throws SQLException {
         return ListUtils.selectOne("choisissez un partenaire :",
-                tousLesPartaires(con), (elem) -> elem.getRefPartenaire());
+                tousLesPartenaires(con), (elem) -> elem.getRefPartenaire());
     }
 
     /**

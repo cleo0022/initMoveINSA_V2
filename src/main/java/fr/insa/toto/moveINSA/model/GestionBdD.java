@@ -154,7 +154,7 @@ public class GestionBdD {
             try {
                 int j = 1;
                 if (rep == j++) {
-                    List<Partenaire> users = Partenaire.tousLesPartaires(con);
+                    List<Partenaire> users = Partenaire.tousLesPartenaires(con);
                     System.out.println(users.size() + " utilisateurs : ");
                     System.out.println(ListUtils.enumerateList(users, (elem) -> elem.toString()));
                 } else if (rep == j++) {
