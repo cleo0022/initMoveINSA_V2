@@ -58,13 +58,71 @@ public class GestionBdD {
                     "create table partenaire ( \n"
                     + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ",\n"
                     + " refPartenaire varchar(50) not null unique\n"
+                   // + "localisation varchar(50) not null"
                     + ")");
             st.executeUpdate(
                     "create table offremobilite ( \n"
                     + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ",\n"
                     + " nbrplaces int not null,\n"
+                    + "specialiteadmis int not null, \n"
                     + " proposepar int not null\n"
                     + ")");
+            st.executeUpdate(
+                    "create table etudiants ( \n"
+                    + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ",\n"
+                    + "nom varchar(50) not null, \n"
+                    + "affecte int, \n"
+                    + "appartient_classe int \n"
+                    + ")");
+            st.executeUpdate(
+                    "create table classe ( \n"
+                    + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ",\n"
+                    + "annee int not null, \n"
+                    + "appartient_spe int not null \n"
+                    + ")");
+            st.executeUpdate(
+                    "create table Specialite1 ( \n"
+                    + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ",\n"
+                    + " nom varchar(50) not null, \n" 
+                    + "appartient_dep int not null \n"
+                    + ")");
+            st.executeUpdate(
+                    "create table pays ( \n"
+                    + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ",\n"
+                    + " nom varchar(50) not null \n" 
+                    + ")");
+            st.executeUpdate(
+                    "create table departement ( \n"
+                    + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ",\n" 
+                    + "nom varchar (50) not null, \n"
+                    + "parsemestre int not null \n"     
+                    + ")");
+            st.executeUpdate(
+                    "create table semestre ( \n"
+                    + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ",\n"
+                    + " nom varchar(50) not null unique\n"
+                    + ")");
+            st.executeUpdate(
+                    "create table TypeOffre ( \n"
+                    + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ",\n"
+                    + " type varchar(50) not null unique,\n"
+                    + "offretype int not null \n" 
+                    + ")");
+            st.executeUpdate(
+                    "create table Role ( \n"
+                    + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ",\n" 
+                    + "nom varchar (50) not null, \n"
+                    + "description varchar (100) not null, \n"   
+                    + "typerole int not null \n"        
+                    + ")");
+            st.executeUpdate(
+                    "create table Personnel ( \n"
+                    + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ",\n" 
+                    + "nom varchar (50) not null, \n"
+                    + "login varchar(50) not null, \n" 
+                    + "pass varchar(50) not null \n"        
+                    + ")");
+                
             // création des liens
             st.executeUpdate(
                     """
@@ -73,6 +131,73 @@ public class GestionBdD {
                         foreign key (proposepar) references partenaire(id)
                         on delete restrict on update restrict
                     """);
+            st.executeUpdate(
+                    """
+                    alter table etudiants
+                        add constraint fk_etudiant_affecte
+                        foreign key (affecte) references offremobilite(id)
+                        on delete restrict on update restrict
+                    """);
+            st.executeUpdate(
+                    """
+                    alter table etudiants
+                        add constraint fk_etudiant_appartient_classe
+                        foreign key (appartient_classe) references classe(id)
+                        on delete restrict on update restrict
+                    """);
+            st.executeUpdate(
+                    """
+                    alter table Specialite1
+                        add constraint fk_specialite1_appartient_dep
+                        foreign key (appartient_dep) references departement(id)
+                        on delete restrict on update restrict
+                    """);
+            st.executeUpdate(
+                    """
+                    alter table classe
+                        add constraint fk_classe_appartient_spe
+                        foreign key (appartient_spe) references Specialite1(id)
+                        on delete restrict on update restrict
+                    """);
+           /* st.executeUpdate(
+                    """
+                    alter table partenaire
+                        add constraint fk_partenaire_localisation
+                        foreign key (localisation) references pays(id)
+                        on delete restrict on update restrict
+                    """);*/
+           st.executeUpdate(
+                    """
+                    alter table OffreMobilite
+                        add constraint fk_offremobilite_parsemestre
+                        foreign key (parsemestre) references semestre(id)
+                        on delete restrict on update restrict
+                    """);
+           
+           st.executeUpdate(
+                    """
+                    alter table OffreMobilite
+                        add constraint fk_offremobilite_speadmis
+                        foreign key (specialiteadmis) references Specialite1(id)
+                        on delete restrict on update restrict
+                    """);
+
+           st.executeUpdate(
+                    """
+                    alter table OffreMobilite
+                        add constraint fk_offremobilite_offretype
+                        foreign key (offretype) references typeoffre(id)
+                        on delete restrict on update restrict
+                    """);
+           st.executeUpdate(
+                    """
+                    alter table Personnel
+                        add constraint fk_personnel_typerole
+                        foreign key (typerole) references Role(id)
+                        on delete restrict on update restrict
+                    """);
+           
+            
             con.commit();
         } catch (SQLException ex) {
             con.rollback();
@@ -97,6 +222,57 @@ public class GestionBdD {
             } catch (SQLException ex) {
                 // nothing to do : maybe the constraint was not created
             }
+            try {
+                st.executeUpdate(
+                        "alter table offremobilite drop constraint fk_offremobilite_speadmis");
+            } catch (SQLException ex) {
+                // nothing to do : maybe the constraint was not created
+            }
+            
+            try {
+                st.executeUpdate(
+                        "alter table etudiants drop constraint fk_etudiant_affecte");
+            } catch (SQLException ex) {
+                // nothing to do : maybe the constraint was not created
+            }
+            try {
+                st.executeUpdate(
+                        "alter table classe drop constraint fk_etudiant_appartient_classe");
+            } catch (SQLException ex) {
+                // nothing to do : maybe the constraint was not created
+            }
+            try {
+                st.executeUpdate(
+                        "alter table Specialite1 drop constraint fk_specialite1_appartient_dep");
+            } catch (SQLException ex) {
+                // nothing to do : maybe the constraint was not created
+            }
+            try {
+                st.executeUpdate(
+                        "alter table classe drop constraint fk_classe_appartient_spe");
+            } catch (SQLException ex) {
+                // nothing to do : maybe the constraint was not created
+            }
+            try {
+                st.executeUpdate(
+                        "alter table offremobilite drop constraint fk_offreobilite_parsemestre");
+            } catch (SQLException ex) {
+                // nothing to do : maybe the constraint was not created
+            }
+            try {
+                st.executeUpdate(
+                        "alter table offremobilite drop constraint fk_offremobilite_offretype");
+            } catch (SQLException ex) {
+                // nothing to do : maybe the constraint was not created
+            }
+             try {
+                st.executeUpdate(
+                        "alter table Personnel drop constraint fk_personnel_typerole");
+            } catch (SQLException ex) {
+                // nothing to do : maybe the constraint was not created
+            }
+             
+             
             // je peux maintenant supprimer les tables
             try {
                 st.executeUpdate("drop table offremobilite");
@@ -107,6 +283,51 @@ public class GestionBdD {
                 st.executeUpdate("drop table partenaire");
             } catch (SQLException ex) {
             }
+            try {
+                st.executeUpdate("drop table etudiants");
+            } catch (SQLException ex) {
+            }
+            try {
+                st.executeUpdate("drop table classe");
+            } catch (SQLException ex) {
+            }
+            try {
+                st.executeUpdate("drop table Specialite1");
+            } catch (SQLException ex) {
+            }
+            try {
+                st.executeUpdate("drop table pays");
+            } catch (SQLException ex) {
+            }
+            try {
+                st.executeUpdate("drop table departement");
+            } catch (SQLException ex) {
+            }
+            try {
+                st.executeUpdate("drop table semestre");
+            } catch (SQLException ex) {
+                // nothing to do : maybe the table was not created
+            }
+            try {
+                st.executeUpdate("drop table OffreMobilite");
+            } catch (SQLException ex) {
+                // nothing to do : maybe the table was not created
+            }
+            try {
+                st.executeUpdate("drop table Role ");
+            } catch (SQLException ex) {
+                // nothing to do : maybe the table was not created
+            }
+            try {
+                st.executeUpdate("drop table Personnel ");
+            } catch (SQLException ex) {
+                // nothing to do : maybe the table was not created
+            }
+            try {
+                st.executeUpdate("drop table TypeOffre ");
+            } catch (SQLException ex) {
+                // nothing to do : maybe the table was not created
+            } 
         }
     }
 
