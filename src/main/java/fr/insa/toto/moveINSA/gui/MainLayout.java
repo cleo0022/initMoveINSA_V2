@@ -20,6 +20,8 @@ package fr.insa.toto.moveINSA.gui;
 
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -37,11 +39,48 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 public class MainLayout extends AppLayout implements BeforeEnterObserver {
 
     private MenuGauche menuGauche;
+    private EnteteProfil enteteProfil;
 
     public MainLayout() {
-//        System.out.println("MainLayout constructeur "+this);
+        // Initialiser le menu gauche
         this.menuGauche = new MenuGauche();
         this.menuGauche.setHeightFull();
+
+        // Initialiser l'entête profil
+        this.enteteProfil = new EnteteProfil();
+
+        // Créer le bouton DrawerToggle pour le menu gauche
+        DrawerToggle toggle = new DrawerToggle();
+
+        // Ajouter le toggle et le profil dans la navbar
+        HorizontalLayout navbarLayout = new HorizontalLayout();
+        navbarLayout.setWidthFull(); // Étendre sur toute la largeur
+        navbarLayout.setPadding(false);
+        navbarLayout.setSpacing(true);
+        navbarLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        navbarLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
+
+        // Ajouter le bouton toggle (à gauche)
+        navbarLayout.add(toggle);
+
+        // Ajouter un espace flexible pour forcer le profil à droite
+        navbarLayout.addAndExpand(new HorizontalLayout());
+
+        // Ajouter le profil (à droite)
+        navbarLayout.add(this.enteteProfil);
+
+        // Appliquer un style de fond temporaire pour la débogue
+        navbarLayout.getStyle().set("border", "1px solid black"); // Ligne pour voir les limites du layout
+        this.enteteProfil.getStyle().set("background-color", "lightblue"); // Fond bleu pour vérifier sa visibilité
+
+        // Ajouter la barre de navigation
+        this.addToNavbar(navbarLayout);
+
+        // Ajouter le menu gauche au Drawer
+        this.addToDrawer(this.menuGauche);
+       
+    }
+    //System.out.println("MainLayout constructeur "+this);
 //        Scroller scroller = new Scroller(this.menuGauche);
 //        scroller.setScrollDirection(Scroller.ScrollDirection.VERTICAL);
 //        scroller.setHeightFull();
@@ -51,12 +90,6 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
 //        Scroller scroller = new Scroller(pourScroll);
 //        scroller.setScrollDirection(Scroller.ScrollDirection.VERTICAL);
 //        scroller.setHeightFull();
-        this.addToDrawer(this.menuGauche);
-        DrawerToggle toggle = new DrawerToggle();
-        this.addToNavbar(toggle,new EnteteInitiale());
-//        this.addToNavbar(new EnteteInitiale());
-    }
-
     /**
      * Cette méthode est appelée systématiquement par vaadin avant l'affichage
      * de toute page ayant ce layout (donc à priori toutes les pages "normales"

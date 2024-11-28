@@ -24,13 +24,16 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import java.util.List;
+import com.vaadin.flow.component.login.LoginForm;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.server.VaadinSession;
 
 @PageTitle("MoveINSA")
-@Route(value = "", layout = MainLayout.class)
+@Route(value = "")// layout = MainLayout.class)
 public class VuePrincipale extends VerticalLayout {
 
     public VuePrincipale() {
-        this.add(new H3("Petit programme pour démarrer le projet M3 2024"));
+        /*this.add(new H3("Petit programme pour démarrer le projet M3 2024"));
         List<Paragraph> attention = List.of(
                 new Paragraph("Attention : la base de donnée utilisée par défaut "
                         + "est créée en mémoire."),
@@ -45,6 +48,33 @@ public class VuePrincipale extends VerticalLayout {
         );
         attention.get(0).getStyle().set("color", "red");
         attention.forEach((p) -> this.add(p));
+*/
+       
+           LoginForm loginForm = new LoginForm();
 
+        // Centrage du formulaire
+        setSizeFull();
+        setJustifyContentMode(JustifyContentMode.CENTER);
+        setAlignItems(Alignment.CENTER);
+
+        loginForm.addLoginListener(event -> {
+            String username = event.getUsername();
+            String password = event.getPassword();
+
+            // Validation simple des identifiants (à remplacer par votre logique d'authentification)
+            if ("eden".equals(username) && "thebest".equals(password)) {
+                // Stocker l'utilisateur dans la session
+                VaadinSession.getCurrent().setAttribute("user", username);
+
+                // Rediriger vers une autre vue
+                getUI().ifPresent(ui -> ui.navigate("home"));
+            } else {
+                loginForm.setError(true); // Afficher un message d'erreur
+            }
+        });
+
+        add(loginForm);
     }
-}
+    }
+
+    

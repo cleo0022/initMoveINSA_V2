@@ -35,13 +35,13 @@ import java.util.Optional;
  *
  * @author francois
  */
-public class EnteteInitiale extends HorizontalLayout {
+public class Entete extends HorizontalLayout {
 
-    private TextField tfNom;
+    /*private TextField tfNom;
     private Button bLogin;
     private Button bLogout;
 
-    public EnteteInitiale() {
+    public Entete() {
         this.setWidthFull();
         this.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
         this.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
@@ -78,6 +78,10 @@ public class EnteteInitiale extends HorizontalLayout {
         } else {
             this.add(this.tfNom, this.bLogin);
         }
+    }*/
+    
+     public Entete() {
+        this.add(new H3("Move Insa"));
     }
 
 }

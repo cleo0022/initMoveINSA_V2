@@ -38,6 +38,7 @@ import fr.insa.toto.moveINSA.gui.vues.TodoPanel;
  *
  * @author francois
  */
+ 
 public class MenuGauche extends SideNav {
 
     public MenuGauche() {
