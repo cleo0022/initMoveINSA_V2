@@ -353,7 +353,23 @@ public class GestionBdD {
         for (var o : offres) {
             o.saveInDB(con);
         }
-
+        List<Departements> depart = List.of(
+                 new Departements(1,"GT3E"),
+                 new Departements(2,"Batiment"),
+                 new Departements(3,"Mecanique")
+                 
+        );
+        for (var d : depart) {
+            d.saveInDB(con);
+        }
+        List<Specialite1> spe = List.of(
+                 new Specialite1("Plasturgie",3),
+                 new Specialite1("Mecatronique",3),
+                 new Specialite1("Mecanique",3)
+        );
+        for (var s : spe) {
+            s.saveInDB(con);
+        }
     }
 
     public static void razBDD(Connection con) throws SQLException {
@@ -405,6 +421,31 @@ public class GestionBdD {
                     System.out.println(ListUtils.enumerateList(offres, (elem) -> elem.toString()));
                 } else if (rep == j++) {
                     OffreMobilite.creeConsole(con);
+                }
+            } catch (Exception ex) {
+                System.out.println(ExceptionsUtils.messageEtPremiersAppelsDansPackage(ex, "fr.insa", 3));
+            }
+        }
+    }
+    
+    public static void menuDepartements(Connection con) {
+        int rep = -1;
+        while (rep != 0) {
+            int i = 1;
+            System.out.println("Menu Departements");
+            System.out.println("==================");
+            System.out.println((i++) + ") liste de tous les départements");
+            System.out.println((i++) + ") créer un nouveaux départements");
+            System.out.println("0) Retour");
+            rep = ConsoleFdB.entreeEntier("Votre choix : ");
+            try {
+                int j = 1;
+                if (rep == j++) {
+                    List<Departements> dep = Departements.tousLesDep(con);
+                    System.out.println(dep.size() + " departements : ");
+                    System.out.println(ListUtils.enumerateList(dep, (elem) -> elem.toString()));
+                } else if (rep == j++) {
+                    Departements.creeConsole(con);
                 }
             } catch (Exception ex) {
                 System.out.println(ExceptionsUtils.messageEtPremiersAppelsDansPackage(ex, "fr.insa", 3));
@@ -464,6 +505,7 @@ public class GestionBdD {
             System.out.println((i++) + ") menu gestion BdD");
             System.out.println((i++) + ") menu partenaires");
             System.out.println((i++) + ") menu offres");
+            System.out.println((i++) + ") menu departements");
             System.out.println("0) Fin");
             rep = ConsoleFdB.entreeEntier("Votre choix : ");
             try {
@@ -482,6 +524,8 @@ public class GestionBdD {
                     menuPartenaire(con);
                 } else if (rep == j++) {
                     menuOffre(con);
+                }else if (rep == j++) {
+                    menuDepartements(con);
                 }
             } catch (Exception ex) {
                 System.out.println(ExceptionsUtils.messageEtPremiersAppelsDansPackage(ex, "fr.insa", 3));
