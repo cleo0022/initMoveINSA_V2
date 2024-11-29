@@ -41,7 +41,7 @@ public class ConnectionPool {
     // un bloc static directement dans une classe est exécuté au chargement
     // de la classe
     // pour une BdD en mémoire en utilisant le sgbd H2
-    static {
+/*    static {
         config.setJdbcUrl("jdbc:h2:mem:pourCoursVaadin");
         // peut être pas indispensable, mais dans le doute...
         config.setUsername("inutilePourH2Mem");
@@ -52,19 +52,19 @@ public class ConnectionPool {
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
         ds = new HikariDataSource(config);
     }
-
+*/
     // pour une BdD en utilisant le sgbd mysql pour module M3
-//    static {
-//        config.setJdbcUrl("jdbc:mysql://92.222.25.165:3306/m3_fdebertranddeb01");
-//        config.setUsername("m3_fdebertranddeb01");
-//        config.setPassword("je le donne pas");
-//        config.setMaximumPoolSize(10);
-//        config.addDataSourceProperty("cachePrepStmts", "true");
-//        config.addDataSourceProperty("useServerPrepStmts", "true");
-//        config.addDataSourceProperty("prepStmtCacheSize", "250");
-//        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-//        ds = new HikariDataSource(config);
-//    }
+    static {
+        config.setJdbcUrl("jdbc:mysql://92.222.25.165:3306/m3_fdebertranddeb01");
+        config.setUsername("m3_cheitzmann01");
+        config.setPassword("df1c09be");
+        config.setMaximumPoolSize(10);
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("useServerPrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        ds = new HikariDataSource(config);
+    }
 
     public static Connection getConnection() throws SQLException {
         return ds.getConnection();
