@@ -21,7 +21,6 @@ package fr.insa.toto.moveINSA.model;
 import java.sql.SQLException;
 
 /**
- *
  * @author francois
  */
 public class EntiteDejaSauvegardee extends SQLException {

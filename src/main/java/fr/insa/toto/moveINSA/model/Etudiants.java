@@ -20,48 +20,63 @@ package fr.insa.toto.moveINSA.model;
 
 import fr.insa.beuvron.utils.ConsoleFdB;
 import fr.insa.beuvron.utils.list.ListUtils;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
- *
  * @author cleoh
  */
 public class Etudiants {
-    
-    private int id ;
-    private String nom ;
-    private int affecte ;
+
+    private int id;
+    private String nom;
+    private int affecte;
     private int appartient_classe;
     private String loginEtu;
     private String mdpEtu;
+
     /**
-    * @param nom
-    */ 
-    public Etudiants (String nom, int affecte, int appartient_classe, String loginEtu, String mdpEtu) {
-        this(-1,nom, affecte, appartient_classe, loginEtu, mdpEtu);
+     * @param nom
+     */
+    public Etudiants(String nom, int affecte, int appartient_classe, String loginEtu, String mdpEtu) {
+        this(-1, nom, affecte, appartient_classe, loginEtu, mdpEtu);
     }
-    
-    public Etudiants (int id, String nom, int affecte, int appartient_classe, String loginEtu, String mdpEtu){
+
+    public Etudiants(int id, String nom, int affecte, int appartient_classe, String loginEtu, String mdpEtu) {
         this.id = id;
-        this.nom = nom ;
-        this.affecte = affecte ;
-        this.appartient_classe = appartient_classe ;
-        this.loginEtu=loginEtu;
-        this.mdpEtu=mdpEtu;
+        this.nom = nom;
+        this.affecte = affecte;
+        this.appartient_classe = appartient_classe;
+        this.loginEtu = loginEtu;
+        this.mdpEtu = mdpEtu;
     }
+
+    public static List<Etudiants> tousLesEtudiants(Connection con) throws SQLException {
+        try (PreparedStatement pst = con.prepareStatement(
+                "select id,nom,affecte,appartient_classe, loginEtu, mdpEtu from Etudiants")) {
+            ResultSet rs = pst.executeQuery();
+            List<Etudiants> res = new ArrayList<>();
+            while (rs.next()) {
+                res.add(new Etudiants(rs.getInt(1), rs.getString(2),
+                        rs.getInt(3), rs.getInt(4), rs.getString(5), rs.getString(6)));
+            }
+            return res;
+        }
+    }
+
     @Override
     public String toString() {
-        return "Etudiants{" + "id =" + this.getId() + " ; nom=" + nom + "; affecte=" +affecte +
-                " ;appartient_classe=" +appartient_classe+ "; loginEtu=" + loginEtu+
-                ";mdpEtu=" +mdpEtu+'}';
-       
+        return "Etudiants{" + "id =" + this.getId() + " ; nom=" + nom + "; affecte=" + affecte +
+                " ;appartient_classe=" + appartient_classe + "; loginEtu=" + loginEtu +
+                ";mdpEtu=" + mdpEtu + '}';
+
     }
-    
-    
+
     public int saveInDB(Connection con) throws SQLException {
         if (this.getId() != -1) {
             throw new EntiteDejaSauvegardee();
@@ -79,22 +94,9 @@ public class Etudiants {
             }
         }
     }
-    
-    public static List<Etudiants> tousLesEtudiants(Connection con) throws SQLException {
-        try (PreparedStatement pst = con.prepareStatement(
-                "select id,nom,affecte,appartient_classe, loginEtu, mdpEtu from Etudiants")) {
-            ResultSet rs = pst.executeQuery();
-            List<Etudiants> res = new ArrayList<>();
-            while (rs.next()) {
-                res.add(new Etudiants(rs.getInt(1), rs.getString(2), 
-                        rs.getInt(3), rs.getInt(4),rs.getString(5),rs.getString(6)));
-            }
-            return res;
-        }
-    }
-    
+
     public int getId() {
         return id;
     }
-    
+
 }

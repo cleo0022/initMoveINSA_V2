@@ -24,30 +24,42 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
- *
  * @author cleoh
  */
 public class Specialite1 {
-    private int id ;
+    private int id;
     private String nom;
-    private int appartient_dep ;
-    
-    public Specialite1 (String nom, int appartient_dep){
-        this (-1, nom, appartient_dep);
+    private int appartient_dep;
+
+    public Specialite1(String nom, int appartient_dep) {
+        this(-1, nom, appartient_dep);
     }
-    
-    public Specialite1 (int id, String nom, int appartient_dep){
+
+    public Specialite1(int id, String nom, int appartient_dep) {
         this.id = id;
-        this.nom = nom ;
-        this.appartient_dep= appartient_dep ;
+        this.nom = nom;
+        this.appartient_dep = appartient_dep;
     }
-    
+
+    public static List<Specialite1> toutesLesSpe(Connection con) throws SQLException {
+        try (PreparedStatement pst = con.prepareStatement(
+                "select id,nom, appartient_dep from Specialite1")) {
+            ResultSet rs = pst.executeQuery();
+            List<Specialite1> res = new ArrayList<>();
+            while (rs.next()) {
+                res.add(new Specialite1(rs.getInt(1), rs.getString(2), rs.getInt(3)));
+            }
+            return res;
+        }
+    }
+
     @Override
     public String toString() {
-        return "Specialite1{" + "id =" + this.getId() + " ; nom=" + nom  + " ;appartient_dep=" +appartient_dep+'}'; 
+        return "Specialite1{" + "id =" + this.getId() + " ; nom=" + nom + " ;appartient_dep=" + appartient_dep + '}';
     }
-    
+
     public int saveInDB(Connection con) throws SQLException {
         if (this.getId() != -1) {
             throw new EntiteDejaSauvegardee();
@@ -64,20 +76,8 @@ public class Specialite1 {
             }
         }
     }
-    
-    public static List<Specialite1> toutesLesSpe(Connection con) throws SQLException {
-        try (PreparedStatement pst = con.prepareStatement(
-                "select id,nom, appartient_dep from Specialite1")) {
-            ResultSet rs = pst.executeQuery();
-            List<Specialite1> res = new ArrayList<>();
-            while (rs.next()) {
-                res.add(new Specialite1(rs.getInt(1), rs.getString(2), rs.getInt(3)));
-            }
-            return res;
-        }
-    }
-    
-    public int getId(){
+
+    public int getId() {
         return id;
     }
 }

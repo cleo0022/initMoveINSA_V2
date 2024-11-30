@@ -20,6 +20,7 @@ package fr.insa.toto.moveINSA.model;
 
 import fr.insa.beuvron.utils.ConsoleFdB;
 import fr.insa.beuvron.utils.list.ListUtils;
+
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -56,7 +57,7 @@ import java.util.Optional;
  *
  * @author francois
  */
-public class Partenaire implements Serializable{
+public class Partenaire implements Serializable {
 
     /**
      * permet de tester lors du chargement d'un objet sérialisé que la version
@@ -65,7 +66,7 @@ public class Partenaire implements Serializable{
      * </pre>
      */
     private static final long serialVersionUID = 1;
-    
+
     private int id;
     private String refPartenaire;
 
@@ -76,7 +77,7 @@ public class Partenaire implements Serializable{
      * @param refPartenaire
      */
     public Partenaire(String refPartenaire) {
-        this(-1,refPartenaire);
+        this(-1, refPartenaire);
     }
 
     /**
@@ -87,40 +88,6 @@ public class Partenaire implements Serializable{
     public Partenaire(int id, String refPartenaire) {
         this.id = id;
         this.refPartenaire = refPartenaire;
-    }
-
-    @Override
-    public String toString() {
-        return "Partenaire{" + "id =" + this.getId() + " ; refPartenaire=" + refPartenaire + '}';
-    }
-
-    /**
-     * Sauvegarde une nouvelle entité et retourne la clé affecté automatiquement
-     * par le SGBD.
-     * <p>
-     * la clé est également sauvegardée dans l'attribut id
-     * </p>
-     *
-     * @param con
-     * @return la clé de la nouvelle entité dans la table de la BdD
-     * @throws EntiteDejaSauvegardee si l'id de l'entité est différent de -1
-     * @throws SQLException si autre problème avec la BdD
-     */
-    public int saveInDB(Connection con) throws SQLException {
-        if (this.getId() != -1) {
-            throw new EntiteDejaSauvegardee();
-        }
-        try (PreparedStatement insert = con.prepareStatement(
-                "insert into partenaire (refPartenaire) values (?)",
-                PreparedStatement.RETURN_GENERATED_KEYS)) {
-            insert.setString(1, this.getRefPartenaire());
-            insert.executeUpdate();
-            try (ResultSet rid = insert.getGeneratedKeys()) {
-                rid.next();
-                this.id = rid.getInt(1);
-                return this.getId();
-            }
-        }
     }
 
     public static List<Partenaire> tousLesPartenaires(Connection con) throws SQLException {
@@ -136,10 +103,10 @@ public class Partenaire implements Serializable{
     }
 
     public static Optional<Partenaire> trouvePartaire(Connection con,
-            String refPart) throws SQLException {
+                                                      String refPart) throws SQLException {
         try (PreparedStatement pst = con.prepareStatement(
                 "select id,refPartenaire from partenaire"
-                + "  where refPartenaire = ?")) {
+                        + "  where refPartenaire = ?")) {
             pst.setString(1, refPart);
             ResultSet rs = pst.executeQuery();
             if (rs.next()) {
@@ -160,6 +127,40 @@ public class Partenaire implements Serializable{
     public static Partenaire selectInConsole(Connection con) throws SQLException {
         return ListUtils.selectOne("choisissez un partenaire :",
                 tousLesPartenaires(con), (elem) -> elem.getRefPartenaire());
+    }
+
+    @Override
+    public String toString() {
+        return "Partenaire{" + "id =" + this.getId() + " ; refPartenaire=" + refPartenaire + '}';
+    }
+
+    /**
+     * Sauvegarde une nouvelle entité et retourne la clé affecté automatiquement
+     * par le SGBD.
+     * <p>
+     * la clé est également sauvegardée dans l'attribut id
+     * </p>
+     *
+     * @param con
+     * @return la clé de la nouvelle entité dans la table de la BdD
+     * @throws EntiteDejaSauvegardee si l'id de l'entité est différent de -1
+     * @throws SQLException          si autre problème avec la BdD
+     */
+    public int saveInDB(Connection con) throws SQLException {
+        if (this.getId() != -1) {
+            throw new EntiteDejaSauvegardee();
+        }
+        try (PreparedStatement insert = con.prepareStatement(
+                "insert into Partenaire (refPartenaire) values (?)",
+                PreparedStatement.RETURN_GENERATED_KEYS)) {
+            insert.setString(1, this.getRefPartenaire());
+            insert.executeUpdate();
+            try (ResultSet rid = insert.getGeneratedKeys()) {
+                rid.next();
+                this.id = rid.getInt(1);
+                return this.getId();
+            }
+        }
     }
 
     /**

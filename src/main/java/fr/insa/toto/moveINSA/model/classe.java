@@ -24,31 +24,43 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
- *
  * @author cleoh
  */
 public class classe { //plutot le numero de l'année souhaité
-    private int id ;
-    private int annee ; 
-    private int appartient_spe ;
-    
-   public classe (int annee, int appartient_spe){
-        this (-1, annee, appartient_spe);
-   }
-   
-   public classe (int id, int annee, int appartient_spe){
-       this.id=id;
-       this.annee =annee;
-       this.appartient_spe = appartient_spe;
-   }
-   
-   @Override
-    public String toString() {
-        return "classe{" + "id =" + this.getId() + " ; annee=" + annee  + 
-                " ;appartient_spe=" +appartient_spe+'}'; 
+    private int id;
+    private int annee;
+    private int appartient_spe;
+
+    public classe(int annee, int appartient_spe) {
+        this(-1, annee, appartient_spe);
     }
-    
+
+    public classe(int id, int annee, int appartient_spe) {
+        this.id = id;
+        this.annee = annee;
+        this.appartient_spe = appartient_spe;
+    }
+
+    public static List<classe> toutesLesClasse(Connection con) throws SQLException {
+        try (PreparedStatement pst = con.prepareStatement(
+                "select id,annee, appartient_spe from classe")) {
+            ResultSet rs = pst.executeQuery();
+            List<classe> res = new ArrayList<>();
+            while (rs.next()) {
+                res.add(new classe(rs.getInt(1), rs.getInt(2), rs.getInt(3)));
+            }
+            return res;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "classe{" + "id =" + this.getId() + " ; annee=" + annee +
+                " ;appartient_spe=" + appartient_spe + '}';
+    }
+
     public int saveInDB(Connection con) throws SQLException {
         if (this.getId() != -1) {
             throw new EntiteDejaSauvegardee();
@@ -65,18 +77,8 @@ public class classe { //plutot le numero de l'année souhaité
             }
         }
     }
-    public static List<classe> toutesLesClasse(Connection con) throws SQLException {
-        try (PreparedStatement pst = con.prepareStatement(
-                "select id,annee, appartient_spe from classe")) {
-            ResultSet rs = pst.executeQuery();
-            List<classe> res = new ArrayList<>();
-            while (rs.next()) {
-                res.add(new classe(rs.getInt(1), rs.getInt(2),rs.getInt(3)));
-            }
-               return res;
-        }
-    }
-    public int getId(){
+
+    public int getId() {
         return id;
     }
 }

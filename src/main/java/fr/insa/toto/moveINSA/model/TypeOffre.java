@@ -24,27 +24,40 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
- *
  * @author cleoh
  */
 public class TypeOffre {
     private int id;
     private String Type; //erasmus, DDiplome, ect
-    
-    public TypeOffre(String Type){
-        this(-1,Type);
+
+    public TypeOffre(String Type) {
+        this(-1, Type);
     }
-    
-    public TypeOffre (int id, String Type){
-        this.id=id;
-        this.Type=Type;
+
+    public TypeOffre(int id, String Type) {
+        this.id = id;
+        this.Type = Type;
     }
+
+    public static List<TypeOffre> toutesLesTypeOffre(Connection con) throws SQLException {
+        try (PreparedStatement pst = con.prepareStatement(
+                "select id,Type from TypeOffre")) {
+            ResultSet rs = pst.executeQuery();
+            List<TypeOffre> res = new ArrayList<>();
+            while (rs.next()) {
+                res.add(new TypeOffre(rs.getInt(1), rs.getString(2)));
+            }
+            return res;
+        }
+    }
+
     @Override
     public String toString() {
-        return "TypeOffre{" + "id =" + this.getId() + " ; Type=" + Type+'}'; 
+        return "TypeOffre{" + "id =" + this.getId() + " ; Type=" + Type + '}';
     }
-    
+
     public int saveInDB(Connection con) throws SQLException {
         if (this.getId() != -1) {
             throw new EntiteDejaSauvegardee();
@@ -59,18 +72,8 @@ public class TypeOffre {
             }
         }
     }
-    public static List<TypeOffre> toutesLesTypeOffre(Connection con) throws SQLException {
-        try (PreparedStatement pst = con.prepareStatement(
-                "select id,Type from TypeOffre")) {
-            ResultSet rs = pst.executeQuery();
-            List<TypeOffre> res = new ArrayList<>();
-            while (rs.next()) {
-                res.add(new TypeOffre(rs.getInt(1), rs.getString(2)));
-            }
-               return res;
-        }
-    }
-    public int getId(){
+
+    public int getId() {
         return id;
     }
 }

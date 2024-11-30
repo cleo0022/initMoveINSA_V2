@@ -59,7 +59,7 @@ public class ConnectionSimpleSGBD {
     }
 
     public static Connection connectMySQL(String host, int port,
-            String database, String user, String pass) throws SQLException {
+                                          String database, String user, String pass) throws SQLException {
         // ce test de la classe du driver n'est plus censée être indispensable
         // mais j'ai des problème si je ne l'utilise pas lorsque je porte
         // mon application web dans un serveur tomcat
@@ -114,9 +114,9 @@ public class ConnectionSimpleSGBD {
      * </p>
      *
      * @param name vous pouvez donner un nom quelconque, par exemple "test".
-     * Cela ne sert que dans le cas exceptionnel ou vous voulez avoir deux bases
-     * de données distinctes en mémoire : il suffit alors de leur donner deux
-     * noms différents.
+     *             Cela ne sert que dans le cas exceptionnel ou vous voulez avoir deux bases
+     *             de données distinctes en mémoire : il suffit alors de leur donner deux
+     *             noms différents.
      * @return
      */
     public static Connection h2InMemory(String name) throws SQLException {
@@ -143,12 +143,12 @@ public class ConnectionSimpleSGBD {
      * </p>
      *
      * @param path le répertoire où sera sauvegarder les fichiers de la BdD. Le
-     * plus simple est de donner un chemin relatif, par exemple "bdd". Cela
-     * créera un dossier "bdd" dans le répertoire principal du projet.
+     *             plus simple est de donner un chemin relatif, par exemple "bdd". Cela
+     *             créera un dossier "bdd" dans le répertoire principal du projet.
      * @return
      */
     public static Connection h2InFile(String path) throws SQLException {
-       try {
+        try {
             Class.forName("org.h2.Driver");
         } catch (ClassNotFoundException ex) {
             throw new SQLException("driver h2 not found", ex);
@@ -173,7 +173,7 @@ public class ConnectionSimpleSGBD {
      * prochaine version) </p>
      * <p>
      * exemple d'utilisation classique : null null     {@code
-     *         try (PreparedStatement pst = con.prepareStatement(
+     * try (PreparedStatement pst = con.prepareStatement(
      * "create table test("
      * + sqlForGeneratedKeys(con, "id") + ","
      * + "  nom varchar(30)"
@@ -186,7 +186,7 @@ public class ConnectionSimpleSGBD {
      *
      * @param con
      * @param nomColonne le nom de la colonne contenant la clé primaire. Par
-     * exemple "id"
+     *                   exemple "id"
      * @return
      * @throws SQLException
      */

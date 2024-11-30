@@ -19,6 +19,7 @@ along with CoursBeuvron.  If not, see <http://www.gnu.org/licenses/>.
 package fr.insa.toto.moveINSA.model;
 
 import fr.insa.beuvron.utils.ConsoleFdB;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -41,6 +42,9 @@ public class OffreMobilite {
     private int nbrPlaces;
     private int proposePar;
 
+
+    private int specialiteadmis;
+
     /**
      * création d'une nouvelle Offre en mémoire, non existant dans la Base de
      * donnée.
@@ -58,44 +62,9 @@ public class OffreMobilite {
         this.proposePar = proposePar;
     }
 
-    @Override
-    public String toString() {
-        return "OffreMobilite{" + "id=" + this.getId() + " ; nbrPlaces=" + nbrPlaces + " ; proposePar=" + proposePar + '}';
-    }
-
-    /**
-     * Sauvegarde une nouvelle entité et retourne la clé affecté automatiquement
-     * par le SGBD.
-     * <p>
-     * la clé est également sauvegardée dans l'attribut id
-     * </p>
-     *
-     * @param con
-     * @return la clé de la nouvelle entité dans la table de la BdD
-     * @throws EntiteDejaSauvegardee si l'id de l'entité est différent de -1
-     * @throws SQLException si autre problème avec la BdD
-     */
-    public int saveInDB(Connection con) throws SQLException {
-        if (this.getId() != -1) {
-            throw new fr.insa.toto.moveINSA.model.EntiteDejaSauvegardee();
-        }
-        try (PreparedStatement insert = con.prepareStatement(
-                "insert into offremobilite (nbrplaces,proposepar) values (?,?)",
-                PreparedStatement.RETURN_GENERATED_KEYS)) {
-            insert.setInt(1, this.nbrPlaces);
-            insert.setInt(2, this.proposePar);
-            insert.executeUpdate();
-            try (ResultSet rid = insert.getGeneratedKeys()) {
-                rid.next();
-                this.id = rid.getInt(1);
-                return this.getId();
-            }
-        }
-    }
-
     public static List<OffreMobilite> toutesLesOffres(Connection con) throws SQLException {
         try (PreparedStatement pst = con.prepareStatement(
-                "select id,nbrplaces,proposepar from offremobilite")) {
+                "select id,nbrplaces,proposepar from OffreMobilite")) {
             ResultSet rs = pst.executeQuery();
             List<OffreMobilite> res = new ArrayList<>();
             while (rs.next()) {
@@ -112,11 +81,76 @@ public class OffreMobilite {
         return nouveau.saveInDB(con);
     }
 
+    @Override
+    public String toString() {
+        return "OffreMobilite{" + "id=" + this.getId() + " ; nbrPlaces=" + nbrPlaces + " ; proposePar=" + proposePar + '}';
+    }
+
+    /**
+     * Sauvegarde une nouvelle entité et retourne la clé affecté automatiquement
+     * par le SGBD.
+     * <p>
+     * la clé est également sauvegardée dans l'attribut id
+     * </p>
+     *
+     * @param con
+     * @return la clé de la nouvelle entité dans la table de la BdD
+     * @throws EntiteDejaSauvegardee si l'id de l'entité est différent de -1
+     * @throws SQLException          si autre problème avec la BdD
+     */
+    public int saveInDB(Connection con) throws SQLException {
+        if (this.getId() != -1) {
+            throw new fr.insa.toto.moveINSA.model.EntiteDejaSauvegardee();
+        }
+        try (PreparedStatement insert = con.prepareStatement(
+                "insert into OffreMobilite (nbrplaces,proposepar, specialiteadmis) values (?,?,?)",
+                PreparedStatement.RETURN_GENERATED_KEYS)) {
+            insert.setInt(1, this.nbrPlaces);
+            insert.setInt(2, this.proposePar);
+            insert.setInt(3, this.specialiteadmis);
+
+            insert.executeUpdate();
+            try (ResultSet rid = insert.getGeneratedKeys()) {
+                rid.next();
+                this.id = rid.getInt(1);
+                return this.getId();
+            }
+        }
+    }
+
     /**
      * @return the id
      */
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getNbrPlaces() {
+        return nbrPlaces;
+    }
+
+    public void setNbrPlaces(int nbrPlaces) {
+        this.nbrPlaces = nbrPlaces;
+    }
+
+    public int getProposePar() {
+        return proposePar;
+    }
+
+    public void setProposePar(int proposePar) {
+        this.proposePar = proposePar;
+    }
+
+    public int getSpecialiteadmis() {
+        return specialiteadmis;
+    }
+
+    public void setSpecialiteadmis(int specialiteadmis) {
+        this.specialiteadmis = specialiteadmis;
     }
 
 }

@@ -22,6 +22,7 @@ import fr.insa.beuvron.utils.ConsoleFdB;
 import fr.insa.beuvron.utils.exceptions.ExceptionsUtils;
 import fr.insa.beuvron.utils.list.ListUtils;
 import fr.insa.beuvron.utils.database.ResultSetUtils;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.Driver;
@@ -31,28 +32,52 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
- *
  * @author cleoh
  */
 public class Departements {
-    private int id ;
-    private String nomDep ;
-    
-    public Departements (String nomDep){
-        this (-1, nomDep);
+    private int id;
+    private String nomDep;
+
+
+    public Departements(String nomDep) {
+        this(-1, nomDep);
     }
-    
-    public Departements (int id, String nomDep) {
-        this.id =id;
-        this.nomDep = nomDep ;
+
+    public Departements(int id, String nomDep) {
+        this.id = id;
+        this.nomDep = nomDep;
     }
-    
-     @Override
+
+    public static List<Departements> tousLesDep(Connection con) throws SQLException {
+        try (PreparedStatement pst = con.prepareStatement(
+                "select id,nomDep from Departements")) {
+            ResultSet rs = pst.executeQuery();
+            List<Departements> res = new ArrayList<>();
+            while (rs.next()) {
+                res.add(new Departements(rs.getInt(1), rs.getString(2)));
+            }
+            return res;
+        }
+    }
+
+    public static int creeConsole(Connection con) throws SQLException {
+        String idDep = ConsoleFdB.entreeString("nomDep : ");
+        Departements nouveau = new Departements(idDep);
+        return nouveau.saveInDB(con);
+    }
+
+    public static Departements selectInConsole(Connection con) throws SQLException {
+        return ListUtils.selectOne("choisissez un departement :",
+                tousLesDep(con), (elem) -> elem.getnomDep());
+    }
+
+    @Override
     public String toString() {
         return "Departements{" + "id =" + this.getId() + " ; nomDep=" + nomDep + '}';
     }
-    
+
     public int saveInDB(Connection con) throws SQLException {
         if (this.getId() != -1) {
             throw new EntiteDejaSauvegardee();
@@ -69,36 +94,13 @@ public class Departements {
             }
         }
     }
-    
-    public static List<Departements> tousLesDep(Connection con) throws SQLException {
-        try (PreparedStatement pst = con.prepareStatement(
-                "select id,nomDep from Departements")) {
-            ResultSet rs = pst.executeQuery();
-            List<Departements> res = new ArrayList<>();
-            while (rs.next()) {
-                res.add(new Departements(rs.getInt(1), rs.getString(2)));
-            }
-            return res;
-        }
-    }
-    
-    public static int creeConsole(Connection con) throws SQLException {
-        String idDep = ConsoleFdB.entreeString("nomDep : ");
-        Departements nouveau = new Departements(idDep);
-        return nouveau.saveInDB(con);
-    }
 
-    public static Departements selectInConsole(Connection con) throws SQLException {
-        return ListUtils.selectOne("choisissez un departement :",
-                tousLesDep(con), (elem) -> elem.getnomDep());
-    }
-    
     public int getId() {
         return id;
     }
-    
-    public String getnomDep(){
+
+    public String getnomDep() {
         return nomDep;
     }
-    
+
 }

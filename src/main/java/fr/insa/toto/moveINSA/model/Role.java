@@ -24,30 +24,43 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
- *
  * @author cleoh
  */
 public class Role {
     private int id;
     private String nomRole;
     private int TypeRole;
-    
-    public Role(String nomRole, int TypeRole){
-        this(-1,nomRole, TypeRole);
+
+    public Role(String nomRole, int TypeRole) {
+        this(-1, nomRole, TypeRole);
     }
-    public Role (int id, String nomRole, int Typerole){
-        this.id=id;
-        this.nomRole=nomRole;
-        this.TypeRole=TypeRole;
+
+    public Role(int id, String nomRole, int Typerole) {
+        this.id = id;
+        this.nomRole = nomRole;
+        this.TypeRole = TypeRole;
     }
-    
+
+    public static List<Role> tousLesRole(Connection con) throws SQLException {
+        try (PreparedStatement pst = con.prepareStatement(
+                "select id,nomRole, TypeRole from Role")) {
+            ResultSet rs = pst.executeQuery();
+            List<Role> res = new ArrayList<>();
+            while (rs.next()) {
+                res.add(new Role(rs.getInt(1), rs.getString(2), rs.getInt(3)));
+            }
+            return res;
+        }
+    }
+
     @Override
     public String toString() {
-        return "Role{" + "id =" + this.getId() + " ; nomRole=" + nomRole  +
-                " ;TypeRole=" +TypeRole+'}'; 
+        return "Role{" + "id =" + this.getId() + " ; nomRole=" + nomRole +
+                " ;TypeRole=" + TypeRole + '}';
     }
-    
+
     public int saveInDB(Connection con) throws SQLException {
         if (this.getId() != -1) {
             throw new EntiteDejaSauvegardee();
@@ -62,18 +75,8 @@ public class Role {
             }
         }
     }
-    public static List<Role> tousLesRole(Connection con) throws SQLException {
-        try (PreparedStatement pst = con.prepareStatement(
-                "select id,nomRole, TypeRole from Role")) {
-            ResultSet rs = pst.executeQuery();
-            List<Role> res = new ArrayList<>();
-            while (rs.next()) {
-                res.add(new Role(rs.getInt(1), rs.getString(2),rs.getInt(3)));
-            }
-               return res;
-        }
-    }
-    public int getId(){
+
+    public int getId() {
         return id;
     }
 }

@@ -24,43 +24,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
- *
  * @author cleoh
  */
 public class Pays {
     private int id;
-    private String nomPays ;
-    
-    public Pays (String nomPays){
+    private String nomPays;
+
+    public Pays(String nomPays) {
         this(-1, nomPays);
     }
-    public Pays (int id, String nomPays){
-        this.id=id;
-        this.nomPays=nomPays;
+
+    public Pays(int id, String nomPays) {
+        this.id = id;
+        this.nomPays = nomPays;
     }
-    
-    @Override
-    public String toString() {
-        return "Pays{" + "id =" + this.getId() + " ; nomPays=" + nomPays  +'}'; 
-    }
-    
-    public int saveInDB(Connection con) throws SQLException {
-        if (this.getId() != -1) {
-            throw new EntiteDejaSauvegardee();
-        }
-        try (PreparedStatement insert = con.prepareStatement(
-                "insert into Pays  values (?)",
-                PreparedStatement.RETURN_GENERATED_KEYS)) {
-            
-            try (ResultSet rid = insert.getGeneratedKeys()) {
-                rid.next();
-                this.id = rid.getInt(1);
-                return this.getId();
-            }
-        }
-    }
-    
+
     public static List<Pays> tousLesPays(Connection con) throws SQLException {
         try (PreparedStatement pst = con.prepareStatement(
                 "select id,nomPays from Pays")) {
@@ -69,11 +49,32 @@ public class Pays {
             while (rs.next()) {
                 res.add(new Pays(rs.getInt(1), rs.getString(2)));
             }
-               return res;
+            return res;
         }
     }
-    
-    public int getId(){
+
+    @Override
+    public String toString() {
+        return "Pays{" + "id =" + this.getId() + " ; nomPays=" + nomPays + '}';
+    }
+
+    public int saveInDB(Connection con) throws SQLException {
+        if (this.getId() != -1) {
+            throw new EntiteDejaSauvegardee();
+        }
+        try (PreparedStatement insert = con.prepareStatement(
+                "insert into Pays  values (?)",
+                PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+            try (ResultSet rid = insert.getGeneratedKeys()) {
+                rid.next();
+                this.id = rid.getInt(1);
+                return this.getId();
+            }
+        }
+    }
+
+    public int getId() {
         return id;
     }
 }

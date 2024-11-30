@@ -25,8 +25,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 /**
- *
  * @author cleoh
  */
 public class Personnel {
@@ -34,24 +34,49 @@ public class Personnel {
     private String nomPers;
     private String loginPers;
     private String mdpPers;
-    
-    public Personnel(String nomPers, String loginPers, String mdpPers){
-            this(-1,nomPers, loginPers, mdpPers);
+
+    public Personnel(String nomPers, String loginPers, String mdpPers) {
+        this(-1, nomPers, loginPers, mdpPers);
     }
-    
-    public Personnel (int id,String nomPers, String loginPers, String mdpPers){
-        this.id=id;
-        this.nomPers=nomPers;
-        this.loginPers=loginPers;
-        this.mdpPers=mdpPers;
+
+    public Personnel(int id, String nomPers, String loginPers, String mdpPers) {
+        this.id = id;
+        this.nomPers = nomPers;
+        this.loginPers = loginPers;
+        this.mdpPers = mdpPers;
     }
-    
+
+    public static List<Personnel> tousLePersonnel(Connection con) throws SQLException {
+        try (PreparedStatement pst = con.prepareStatement(
+                "select id, nomPers, loginPers, mdpPers from Personnel")) {
+            ResultSet rs = pst.executeQuery();
+            List<Personnel> res = new ArrayList<>();
+            while (rs.next()) {
+                res.add(new Personnel(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4)));
+            }
+            return res;
+        }
+    }
+
+    public static Optional<Personnel> cherchePesonnel(Connection con, String ref) throws SQLException {
+        try (PreparedStatement pers = con.prepareStatement(
+                "select id,nomPers,loginPers,mdpPers from nomPers where nomPers = ?")) {
+            pers.setString(1, ref); // le premier est le 1 pas le 0
+            ResultSet rs = pers.executeQuery();
+            if (rs.next()) {
+                return Optional.of(new Personnel(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4)));
+            } else {
+                return Optional.empty();
+            }
+        }
+    }
+
     @Override
     public String toString() {
-        return "Personnel{" + "id =" + this.getId() + " ; nomPers=" + nomPers  +
-                " ;loginPers=" +loginPers+";mdpPers=" + mdpPers +'}'; 
+        return "Personnel{" + "id =" + this.getId() + " ; nomPers=" + nomPers +
+                " ;loginPers=" + loginPers + ";mdpPers=" + mdpPers + '}';
     }
-    
+
     public int saveInDB(Connection con) throws SQLException {
         if (this.getId() != -1) {
             throw new EntiteDejaSauvegardee();
@@ -66,33 +91,8 @@ public class Personnel {
             }
         }
     }
-    public static List<Personnel> tousLePersonnel(Connection con) throws SQLException {
-        try (PreparedStatement pst = con.prepareStatement(
-                "select id, nomPers, loginPers, mdpPers from Personnel")) {
-            ResultSet rs = pst.executeQuery();
-            List<Personnel> res = new ArrayList<>();
-            while (rs.next()) {
-                res.add(new Personnel(rs.getInt(1), rs.getString(2),rs.getString(3), rs.getString(4)));
-            }
-               return res;
-        }
-    }
-    
-    public static Optional<Personnel> cherchePesonnel(Connection con, String ref) throws SQLException {
-        try (PreparedStatement pers = con.prepareStatement(
-                "select id,nomPers,loginPers,mdpPers from nomPers where nomPers = ?")) {
-            pers.setString(1,ref); // le premier est le 1 pas le 0
-            ResultSet rs = pers.executeQuery();
-            if (rs.next()) {
-                return Optional.of(new Personnel(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4)));
-            }
-            else {
-                return Optional.empty();
-            }
-        }
-    }
-    
-    public int getId(){
+
+    public int getId() {
         return id;
     }
 }

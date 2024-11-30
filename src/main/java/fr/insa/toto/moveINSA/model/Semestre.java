@@ -24,42 +24,25 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import fr.insa.beuvron.utils.list.ListUtils;
+
 /**
- *
  * @author cleoh
  */
 public class Semestre {
     private int id;
     private int numero;
-    
-    public Semestre (int numero){
-        this(-1,numero);
+
+    public Semestre(int numero) {
+        this(-1, numero);
     }
-    public Semestre (int id, int numero){
-        this.id=id;
-        this.numero=numero;
+
+    public Semestre(int id, int numero) {
+        this.id = id;
+        this.numero = numero;
     }
-    
-    @Override
-    public String toString() {
-        return "Semestre{" + "id =" + this.getId() + " ; numero=" + numero  +'}'; 
-    }
-    
-    public int saveInDB(Connection con) throws SQLException {
-        if (this.getId() != -1) {
-            throw new EntiteDejaSauvegardee();
-        }
-        try (PreparedStatement insert = con.prepareStatement(
-                "insert into Semestre values (?)",
-                PreparedStatement.RETURN_GENERATED_KEYS)) {
-            
-            try (ResultSet rid = insert.getGeneratedKeys()) {
-                rid.next();
-                this.id = rid.getInt(1);
-                return this.getId();
-            }
-        }
-    }
+
     public static List<Semestre> tousLesSemestre(Connection con) throws SQLException {
         try (PreparedStatement pst = con.prepareStatement(
                 "select id,numero from Semestre")) {
@@ -68,10 +51,32 @@ public class Semestre {
             while (rs.next()) {
                 res.add(new Semestre(rs.getInt(1), rs.getInt(2)));
             }
-               return res;
+            return res;
         }
     }
-    public int getId(){
+
+    @Override
+    public String toString() {
+        return "Semestre{" + "id =" + this.getId() + " ; numero=" + numero + '}';
+    }
+
+    public int saveInDB(Connection con) throws SQLException {
+        if (this.getId() != -1) {
+            throw new EntiteDejaSauvegardee();
+        }
+        try (PreparedStatement insert = con.prepareStatement(
+                "insert into Semestre values (?)",
+                PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+            try (ResultSet rid = insert.getGeneratedKeys()) {
+                rid.next();
+                this.id = rid.getInt(1);
+                return this.getId();
+            }
+        }
+    }
+
+    public int getId() {
         return id;
     }
 }
